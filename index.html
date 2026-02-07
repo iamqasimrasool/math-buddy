@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Math Buddy</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <h1>Math Buddy</h1>
+        <p class="subtitle">Mental math practice for ages 5–12</p>
+      </div>
+      <div class="profile-bar">
+        <span id="currentUserLabel">No profile</span>
+        <button id="openProfileBtn" class="secondary">Profiles</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel" id="setupPanel">
+        <h2>Quiz Setup</h2>
+
+        <div class="field">
+          <label for="gradeSelect">Grade or age group</label>
+          <select id="gradeSelect">
+            <option value="1">Grade 1 (Age 5–6)</option>
+            <option value="2">Grade 2 (Age 6–7)</option>
+            <option value="3">Grade 3 (Age 7–8)</option>
+            <option value="4">Grade 4 (Age 8–9)</option>
+            <option value="5">Grade 5 (Age 9–10)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="modeSelect">Quiz type</label>
+          <select id="modeSelect">
+            <option value="tables">Times Tables</option>
+            <option value="beforeAfter">Before / After</option>
+            <option value="moreLess">10 or 100 More/Less</option>
+            <option value="addSubtract">Addition / Subtraction</option>
+            <option value="mixed">Mixed by grade</option>
+          </select>
+        </div>
+
+        <div id="tablesOptions" class="option-group">
+          <h3>Tables options</h3>
+          <div class="checkbox-grid" id="tablesList"></div>
+          <div class="row">
+            <div class="field">
+              <label for="tableMin">Multiplier min</label>
+              <input id="tableMin" type="number" min="1" max="12" value="1" />
+            </div>
+            <div class="field">
+              <label for="tableMax">Multiplier max</label>
+              <input id="tableMax" type="number" min="1" max="12" value="10" />
+            </div>
+          </div>
+        </div>
+
+        <div id="beforeAfterOptions" class="option-group">
+          <h3>Before / After options</h3>
+          <div class="row">
+            <div class="field">
+              <label for="beforeAfterMin">Range min</label>
+              <input id="beforeAfterMin" type="number" min="1" max="1000" value="1" />
+            </div>
+            <div class="field">
+              <label for="beforeAfterMax">Range max</label>
+              <input id="beforeAfterMax" type="number" min="10" max="1000" value="200" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="beforeAfterType">Question type</label>
+              <select id="beforeAfterType">
+                <option value="both">Before and after</option>
+                <option value="before">Before only</option>
+                <option value="after">After only</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="moreLessOptions" class="option-group">
+          <h3>10 / 100 more or less</h3>
+          <div class="row">
+            <div class="field">
+              <label for="moreLessMin">Range min</label>
+              <input id="moreLessMin" type="number" min="1" max="1000" value="1" />
+            </div>
+            <div class="field">
+              <label for="moreLessMax">Range max</label>
+              <input id="moreLessMax" type="number" min="10" max="1000" value="300" />
+            </div>
+          </div>
+          <div class="checkbox-grid">
+            <label><input id="more10" type="checkbox" checked /> 10 more</label>
+            <label><input id="less10" type="checkbox" checked /> 10 less</label>
+            <label><input id="more100" type="checkbox" /> 100 more</label>
+            <label><input id="less100" type="checkbox" /> 100 less</label>
+          </div>
+        </div>
+
+        <div id="addSubtractOptions" class="option-group">
+          <h3>Addition / Subtraction</h3>
+          <div class="row">
+            <div class="field">
+              <label for="digitsSelect">Number size</label>
+              <select id="digitsSelect">
+                <option value="1">1-digit (0–9)</option>
+                <option value="2" selected>2-digit (10–99)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="noRegrouping">No regrouping</label>
+              <select id="noRegrouping">
+                <option value="yes" selected>Yes</option>
+                <option value="no">Allow regrouping</option>
+              </select>
+            </div>
+          </div>
+          <div class="checkbox-grid">
+            <label><input id="addMode" type="checkbox" checked /> Addition</label>
+            <label><input id="subtractMode" type="checkbox" checked /> Subtraction</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="difficultySelect">Difficulty (timer)</label>
+          <select id="difficultySelect">
+            <option value="easy">Easy — 30s</option>
+            <option value="medium" selected>Medium — 20s</option>
+            <option value="hard">Hard — 10s</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="questionCount">Questions per session (10–20)</label>
+          <input id="questionCount" type="number" min="10" max="20" value="10" />
+        </div>
+
+        <div class="checkbox-grid">
+          <label><input id="showShapes" type="checkbox" /> Show shapes for small numbers</label>
+        </div>
+
+        <button id="startQuizBtn" class="primary">Start Quiz</button>
+      </section>
+
+      <section class="panel quiz-panel" id="quizPanel">
+        <h2>Quiz</h2>
+        <div class="quiz-meta">
+          <div>Question <span id="questionIndex">0</span>/<span id="questionTotal">0</span></div>
+          <div class="timer">Time: <span id="timerValue">0</span>s</div>
+        </div>
+
+        <div class="question-card">
+          <div id="questionText" class="question-text">Pick settings and start.</div>
+          <div id="shapeHint" class="shape-hint"></div>
+        </div>
+
+        <div id="answerDisplay" class="answer-display">Your answer: —</div>
+
+        <div class="listen-card hidden" id="listenCard">
+          <div class="listen-title">Answer by speaking</div>
+          <div id="speechStatus" class="listen-status">Speech ready</div>
+          <button id="listenBtn" class="secondary">Restart Listening</button>
+        </div>
+
+        <div class="answer-row hidden" id="keyboardRow">
+          <input id="answerInput" type="number" placeholder="Type answer" />
+          <button id="submitAnswerBtn" class="primary">Submit</button>
+        </div>
+
+        <button id="skipAnswerBtn" class="secondary hidden">Skip</button>
+
+        <div id="keypad" class="keypad hidden" aria-label="Answer keypad">
+          <button class="keypad-btn" data-value="1">1</button>
+          <button class="keypad-btn" data-value="2">2</button>
+          <button class="keypad-btn" data-value="3">3</button>
+          <button class="keypad-btn" data-value="4">4</button>
+          <button class="keypad-btn" data-value="5">5</button>
+          <button class="keypad-btn" data-value="6">6</button>
+          <button class="keypad-btn" data-value="7">7</button>
+          <button class="keypad-btn" data-value="8">8</button>
+          <button class="keypad-btn" data-value="9">9</button>
+          <button class="keypad-btn small" data-action="clear">Clear</button>
+          <button class="keypad-btn" data-value="0">0</button>
+          <button class="keypad-btn ok" data-action="ok">OK</button>
+        </div>
+
+        <div id="feedback" class="feedback"></div>
+
+        <div class="session-summary">
+          <h3>Session score</h3>
+          <div id="scoreSummary">No active session.</div>
+        </div>
+      </section>
+
+      <section class="panel" id="historyPanel">
+        <h2>History</h2>
+        <div id="historyList" class="history-list">No scores yet.</div>
+      </section>
+    </main>
+
+    <div id="celebration" class="celebration hidden" aria-hidden="true"></div>
+
+    <dialog id="profileDialog">
+      <h2>Profiles</h2>
+      <div id="profileList" class="profile-list">No profiles yet.</div>
+      <div class="divider"></div>
+      <h3>Add new profile</h3>
+      <div class="row">
+        <input id="profileName" placeholder="Name" />
+        <input id="profileAge" type="number" min="4" max="12" placeholder="Age" />
+        <select id="profileGrade">
+          <option value="1">Grade 1</option>
+          <option value="2">Grade 2</option>
+          <option value="3">Grade 3</option>
+          <option value="4">Grade 4</option>
+          <option value="5">Grade 5</option>
+        </select>
+      </div>
+      <div class="dialog-actions">
+        <button id="saveProfileBtn" class="primary">Save</button>
+        <button id="closeProfileBtn" class="secondary">Close</button>
+      </div>
+    </dialog>
+
+    <script src="app.js"></script>
+  </body>
+</html>
