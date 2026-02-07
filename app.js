@@ -664,8 +664,9 @@ function speakQuestion(text) {
   if (!("speechSynthesis" in window)) return;
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "en-US";
-  utterance.rate = 0.9;
-  utterance.pitch = 1.1;
+  utterance.rate = 0.85;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
 }

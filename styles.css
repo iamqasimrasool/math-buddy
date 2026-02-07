@@ -15,9 +15,9 @@ body {
   color: #1f2933;
   line-height: 1.5;
   font-size: 18px;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  overflow: auto;
 }
 
 .app-header {
@@ -51,7 +51,6 @@ body {
   padding: 24px 32px;
   flex: 1;
   min-height: 0;
-  overflow: hidden;
 }
 
 .panel {
@@ -73,6 +72,14 @@ body {
 
 .quiz-panel {
   min-height: 540px;
+  overflow: auto;
+}
+
+body.quiz-active {
+  overflow: hidden;
+}
+
+.quiz-active .layout {
   overflow: hidden;
 }
 
