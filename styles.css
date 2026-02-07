@@ -16,6 +16,8 @@ body {
   line-height: 1.5;
   font-size: 18px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-header {
@@ -47,7 +49,8 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
   padding: 24px 32px;
-  height: calc(100vh - 96px);
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 }
 
@@ -60,6 +63,7 @@ body {
   flex-direction: column;
   gap: 16px;
   min-height: 0;
+  overflow: auto;
 }
 
 .panel h2 {
@@ -402,6 +406,15 @@ dialog {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+  }
+
+  .layout {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .panel {
+    padding: 16px;
   }
 
   .question-text {
