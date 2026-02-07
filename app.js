@@ -70,6 +70,7 @@ const elements = {
   keypad: $("keypad"),
   celebration: $("celebration"),
   listenCard: $("listenCard"),
+  quitQuizBtn: $("quitQuizBtn"),
 };
 
 init();
@@ -99,6 +100,7 @@ function init() {
   elements.skipAnswerBtn.addEventListener("click", () => submitAnswer(true));
   elements.listenBtn.addEventListener("click", () => startListening());
   elements.keypad.addEventListener("click", handleKeypadClick);
+  elements.quitQuizBtn.addEventListener("click", quitQuiz);
 }
 
 function buildTablesList() {
@@ -344,12 +346,14 @@ function nextQuestion() {
   renderShapes(question);
   startTimer(getTimeLimit(state.session.settings.difficulty));
   startListening();
+  speakQuestion(question.text);
 }
 
 function submitAnswer(skip) {
   if (!state.session) return;
   stopListening();
   stopTimer();
+  stopSpeak();
 
   const question = state.session.currentQuestion;
   const answerValue = skip ? null : Number(elements.answerInput.value);
@@ -382,6 +386,7 @@ function submitAnswer(skip) {
 function finishSession() {
   stopTimer();
   stopListening();
+  stopSpeak();
   const user = getCurrentUser();
   if (!user || !state.session) return;
 
@@ -398,6 +403,19 @@ function finishSession() {
   elements.questionText.textContent = "Session complete!";
   elements.shapeHint.innerHTML = "";
   state.session = null;
+  setQuizMode(false);
+}
+
+function quitQuiz() {
+  if (!state.session) return;
+  stopTimer();
+  stopListening();
+  stopSpeak();
+  state.session = null;
+  elements.questionText.textContent = "Quiz stopped.";
+  elements.shapeHint.innerHTML = "";
+  elements.feedback.textContent = "";
+  elements.scoreSummary.textContent = "No active session.";
   setQuizMode(false);
 }
 
@@ -640,6 +658,21 @@ function disableSpeech() {
   elements.listenBtn.disabled = true;
   elements.listenCard.classList.add("hidden");
   setKeyboardMode(true);
+}
+
+function speakQuestion(text) {
+  if (!("speechSynthesis" in window)) return;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "en-US";
+  utterance.rate = 0.9;
+  utterance.pitch = 1.1;
+  window.speechSynthesis.cancel();
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeak() {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
 }
 
 function startListening() {

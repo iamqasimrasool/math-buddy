@@ -4,12 +4,18 @@
   padding: 0;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   font-family: "Segoe UI", Tahoma, sans-serif;
   background: #f6f7fb;
   color: #1f2933;
   line-height: 1.5;
   font-size: 18px;
+  overflow: hidden;
 }
 
 .app-header {
@@ -41,6 +47,8 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
   padding: 24px 32px;
+  height: calc(100vh - 96px);
+  overflow: hidden;
 }
 
 .panel {
@@ -51,6 +59,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
 }
 
 .panel h2 {
@@ -60,6 +69,7 @@ body {
 
 .quiz-panel {
   min-height: 540px;
+  overflow: hidden;
 }
 
 .quiz-active #setupPanel,
