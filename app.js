@@ -71,6 +71,8 @@ const elements = {
   celebration: $("celebration"),
   listenCard: $("listenCard"),
   quitQuizBtn: $("quitQuizBtn"),
+  setupScreen: $("setupScreen"),
+  quizScreen: $("quizScreen"),
 };
 
 init();
@@ -708,7 +710,8 @@ function stopListening() {
 }
 
 function setQuizMode(active) {
-  document.body.classList.toggle("quiz-active", active);
+  elements.setupScreen.classList.toggle("hidden", active);
+  elements.quizScreen.classList.toggle("hidden", !active);
 }
 
 function primeAudio() {

@@ -18,48 +18,49 @@
       </div>
     </header>
 
-    <main class="layout">
-      <section class="panel" id="setupPanel">
-        <h2>Quiz Setup</h2>
+    <main>
+      <section class="screen screen-setup" id="setupScreen">
+        <div class="panel">
+          <h2>Quiz Setup</h2>
 
-        <div class="field">
-          <label for="gradeSelect">Grade or age group</label>
-          <select id="gradeSelect">
-            <option value="1">Grade 1 (Age 5–6)</option>
-            <option value="2">Grade 2 (Age 6–7)</option>
-            <option value="3">Grade 3 (Age 7–8)</option>
-            <option value="4">Grade 4 (Age 8–9)</option>
-            <option value="5">Grade 5 (Age 9–10)</option>
-          </select>
-        </div>
+          <div class="field">
+            <label for="gradeSelect">Grade or age group</label>
+            <select id="gradeSelect">
+              <option value="1">Grade 1 (Age 5–6)</option>
+              <option value="2">Grade 2 (Age 6–7)</option>
+              <option value="3">Grade 3 (Age 7–8)</option>
+              <option value="4">Grade 4 (Age 8–9)</option>
+              <option value="5">Grade 5 (Age 9–10)</option>
+            </select>
+          </div>
 
-        <div class="field">
-          <label for="modeSelect">Quiz type</label>
-          <select id="modeSelect">
-            <option value="tables">Times Tables</option>
-            <option value="beforeAfter">Before / After</option>
-            <option value="moreLess">10 or 100 More/Less</option>
-            <option value="addSubtract">Addition / Subtraction</option>
-            <option value="mixed">Mixed by grade</option>
-          </select>
-        </div>
+          <div class="field">
+            <label for="modeSelect">Quiz type</label>
+            <select id="modeSelect">
+              <option value="tables">Times Tables</option>
+              <option value="beforeAfter">Before / After</option>
+              <option value="moreLess">10 or 100 More/Less</option>
+              <option value="addSubtract">Addition / Subtraction</option>
+              <option value="mixed">Mixed by grade</option>
+            </select>
+          </div>
 
-        <div id="tablesOptions" class="option-group">
-          <h3>Tables options</h3>
-          <div class="checkbox-grid" id="tablesList"></div>
-          <div class="row">
-            <div class="field">
-              <label for="tableMin">Multiplier min</label>
-              <input id="tableMin" type="number" min="1" max="12" value="1" />
-            </div>
-            <div class="field">
-              <label for="tableMax">Multiplier max</label>
-              <input id="tableMax" type="number" min="1" max="12" value="10" />
+          <div id="tablesOptions" class="option-group">
+            <h3>Tables options</h3>
+            <div class="checkbox-grid" id="tablesList"></div>
+            <div class="row">
+              <div class="field">
+                <label for="tableMin">Multiplier min</label>
+                <input id="tableMin" type="number" min="1" max="12" value="1" />
+              </div>
+              <div class="field">
+                <label for="tableMax">Multiplier max</label>
+                <input id="tableMax" type="number" min="1" max="12" value="10" />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div id="beforeAfterOptions" class="option-group">
+          <div id="beforeAfterOptions" class="option-group">
           <h3>Before / After options</h3>
           <div class="row">
             <div class="field">
@@ -83,7 +84,7 @@
           </div>
         </div>
 
-        <div id="moreLessOptions" class="option-group">
+          <div id="moreLessOptions" class="option-group">
           <h3>10 / 100 more or less</h3>
           <div class="row">
             <div class="field">
@@ -103,7 +104,7 @@
           </div>
         </div>
 
-        <div id="addSubtractOptions" class="option-group">
+          <div id="addSubtractOptions" class="option-group">
           <h3>Addition / Subtraction</h3>
           <div class="row">
             <div class="field">
@@ -127,29 +128,31 @@
           </div>
         </div>
 
-        <div class="field">
-          <label for="difficultySelect">Difficulty (timer)</label>
-          <select id="difficultySelect">
-            <option value="easy">Easy — 30s</option>
-            <option value="medium" selected>Medium — 20s</option>
-            <option value="hard">Hard — 10s</option>
-          </select>
-        </div>
+          <div class="field">
+            <label for="difficultySelect">Difficulty (timer)</label>
+            <select id="difficultySelect">
+              <option value="easy">Easy — 30s</option>
+              <option value="medium" selected>Medium — 20s</option>
+              <option value="hard">Hard — 10s</option>
+            </select>
+          </div>
 
-        <div class="field">
-          <label for="questionCount">Questions per session (10–20)</label>
-          <input id="questionCount" type="number" min="10" max="20" value="10" />
-        </div>
+          <div class="field">
+            <label for="questionCount">Questions per session (10–20)</label>
+            <input id="questionCount" type="number" min="10" max="20" value="10" />
+          </div>
 
-        <div class="checkbox-grid">
-          <label><input id="showShapes" type="checkbox" /> Show shapes for small numbers</label>
-        </div>
+          <div class="checkbox-grid">
+            <label><input id="showShapes" type="checkbox" /> Show shapes for small numbers</label>
+          </div>
 
-        <button id="startQuizBtn" class="primary">Start Quiz</button>
+          <button id="startQuizBtn" class="primary">Start Quiz</button>
+        </div>
       </section>
 
-      <section class="panel quiz-panel" id="quizPanel">
-        <h2>Quiz</h2>
+      <section class="screen screen-quiz hidden" id="quizScreen">
+        <div class="panel quiz-panel">
+          <h2>Quiz</h2>
         <div class="quiz-meta">
           <div>Question <span id="questionIndex">0</span>/<span id="questionTotal">0</span></div>
           <div class="timer">Time: <span id="timerValue">0</span>s</div>
@@ -190,19 +193,20 @@
           <button class="keypad-btn ok" data-action="ok">OK</button>
         </div>
 
-        <button id="quitQuizBtn" class="secondary">Quit Quiz</button>
+          <button id="quitQuizBtn" class="secondary">Quit Quiz</button>
 
-        <div id="feedback" class="feedback"></div>
+          <div id="feedback" class="feedback"></div>
 
-        <div class="session-summary">
-          <h3>Session score</h3>
-          <div id="scoreSummary">No active session.</div>
+          <div class="session-summary">
+            <h3>Session score</h3>
+            <div id="scoreSummary">No active session.</div>
+          </div>
+
+          <div class="panel-sub">
+            <h3>History</h3>
+            <div id="historyList" class="history-list">No scores yet.</div>
+          </div>
         </div>
-      </section>
-
-      <section class="panel" id="historyPanel">
-        <h2>History</h2>
-        <div id="historyList" class="history-list">No scores yet.</div>
       </section>
     </main>
 
