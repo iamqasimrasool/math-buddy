@@ -294,25 +294,6 @@ button.secondary {
   border-color: #fecaca;
 }
 
-.type-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-}
-
-.type-row input {
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid #cbd2d9;
-  font-size: 1rem;
-}
-
-.type-row button {
-  padding: clamp(12px, 2vw, 16px) clamp(20px, 3vw, 28px);
-  font-size: clamp(1rem, 2vw, 1.1rem);
-  font-weight: 700;
-}
-
 .hidden {
   display: none !important;
 }

@@ -62,8 +62,6 @@ const elements = {
   answerInput: $("answerInput"),
   speechStatus: $("speechStatus"),
   micDot: $("micDot"),
-  typeAnswerInput: $("typeAnswerInput"),
-  typeAnswerBtn: $("typeAnswerBtn"),
   feedback: $("feedback"),
   scoreSummary: $("scoreSummary"),
   historyList: $("historyList"),
@@ -101,10 +99,6 @@ function init() {
   elements.saveProfileBtn.addEventListener("click", saveProfile);
   elements.startQuizBtn.addEventListener("click", startSession);
   elements.keypad.addEventListener("click", handleKeypadClick);
-  elements.typeAnswerBtn.addEventListener("click", submitTypedAnswer);
-  elements.typeAnswerInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") submitTypedAnswer();
-  });
   elements.answerInput.addEventListener("keydown", (event) => {
     if (event.key >= "0" && event.key <= "9") {
       handleNumberKey(event.key);
@@ -347,6 +341,15 @@ function startSession() {
   nextQuestion();
 }
 
+function updateScoreDisplay() {
+  if (!state.session) return;
+  const correct = state.session.correct;
+  const answered = state.session.index;
+  const wrong = answered - correct;
+  const left = state.session.total - answered;
+  elements.scoreSummary.textContent = `✓ ${correct}  ✗ ${wrong}  ← ${left}`;
+}
+
 function nextQuestion() {
   if (!state.session) return;
   if (state.session.index >= state.session.total) {
@@ -362,7 +365,6 @@ function nextQuestion() {
   state.currentAnswer = "";
   updateAnswerDisplay();
   elements.answerInput.value = "";
-  elements.typeAnswerInput.value = "";
   elements.feedback.textContent = "";
   elements.feedback.className = "feedback";
   renderShapes(question);
@@ -402,7 +404,7 @@ function submitAnswer(skip) {
     correct: isCorrect,
   });
 
-  elements.scoreSummary.textContent = `${state.session.correct} / ${state.session.total} correct`;
+  updateScoreDisplay();
   setTimeout(nextQuestion, 700);
 }
 
@@ -945,14 +947,6 @@ function handleKeypadClick(event) {
   if (action === "ok" && state.currentAnswer) {
     submitAnswer(false);
   }
-}
-
-function submitTypedAnswer() {
-  if (!state.session || state.paused) return;
-  const typed = elements.typeAnswerInput.value.trim();
-  if (!typed) return;
-  setAnswerValue(typed);
-  submitAnswer(false);
 }
 
 function setAnswerValue(value) {
