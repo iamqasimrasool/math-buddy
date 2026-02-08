@@ -14,6 +14,7 @@ const state = {
   audioCtx: null,
   currentAnswer: "",
   isIOS: false,
+  paused: false,
 };
 
 const elements = {
@@ -59,18 +60,18 @@ const elements = {
   shapeHint: $("shapeHint"),
   answerDisplay: $("answerDisplay"),
   answerInput: $("answerInput"),
-  submitAnswerBtn: $("submitAnswerBtn"),
-  skipAnswerBtn: $("skipAnswerBtn"),
   listenBtn: $("listenBtn"),
   speechStatus: $("speechStatus"),
   feedback: $("feedback"),
   scoreSummary: $("scoreSummary"),
   historyList: $("historyList"),
-  keyboardRow: $("keyboardRow"),
   keypad: $("keypad"),
   celebration: $("celebration"),
   listenCard: $("listenCard"),
-  quitQuizBtn: $("quitQuizBtn"),
+  pauseQuizBtn: $("pauseQuizBtn"),
+  backToSettingsBtn: $("backToSettingsBtn"),
+  endQuizBtn: $("endQuizBtn"),
+  editProfileBtn: $("editProfileBtn"),
   setupScreen: $("setupScreen"),
   quizScreen: $("quizScreen"),
 };
@@ -98,11 +99,15 @@ function init() {
   );
   elements.saveProfileBtn.addEventListener("click", saveProfile);
   elements.startQuizBtn.addEventListener("click", startSession);
-  elements.submitAnswerBtn.addEventListener("click", () => submitAnswer(false));
-  elements.skipAnswerBtn.addEventListener("click", () => submitAnswer(true));
   elements.listenBtn.addEventListener("click", () => startListening());
   elements.keypad.addEventListener("click", handleKeypadClick);
-  elements.quitQuizBtn.addEventListener("click", quitQuiz);
+  elements.pauseQuizBtn.addEventListener("click", togglePause);
+  elements.backToSettingsBtn.addEventListener("click", () => quitQuiz(false));
+  elements.endQuizBtn.addEventListener("click", endQuizEarly);
+  elements.editProfileBtn.addEventListener("click", () => {
+    if (state.session && !state.paused) togglePause();
+    elements.profileDialog.showModal();
+  });
 }
 
 function buildTablesList() {
@@ -321,6 +326,8 @@ function startSession() {
     correct: 0,
     questions: [],
   };
+  state.paused = false;
+  elements.pauseQuizBtn.textContent = "Pause";
   setQuizMode(true);
   primeAudio();
   elements.questionTotal.textContent = total;
@@ -353,6 +360,7 @@ function nextQuestion() {
 
 function submitAnswer(skip) {
   if (!state.session) return;
+  if (state.paused) return;
   stopListening();
   stopTimer();
   stopSpeak();
@@ -389,36 +397,57 @@ function finishSession() {
   stopTimer();
   stopListening();
   stopSpeak();
-  const user = getCurrentUser();
-  if (!user || !state.session) return;
-
-  const sessionSummary = {
-    date: new Date().toLocaleString(),
-    mode: state.session.settings.mode,
-    score: state.session.correct,
-    total: state.session.total,
-    difficulty: state.session.settings.difficulty,
-  };
-  user.history.unshift(sessionSummary);
-  saveData();
+  saveSessionSummary(state.session.total);
   renderHistory();
   elements.questionText.textContent = "Session complete!";
   elements.shapeHint.innerHTML = "";
   state.session = null;
+  state.paused = false;
   setQuizMode(false);
 }
 
-function quitQuiz() {
+function quitQuiz(showSetup) {
   if (!state.session) return;
   stopTimer();
   stopListening();
   stopSpeak();
   state.session = null;
+  state.paused = false;
   elements.questionText.textContent = "Quiz stopped.";
   elements.shapeHint.innerHTML = "";
   elements.feedback.textContent = "";
   elements.scoreSummary.textContent = "No active session.";
+  if (showSetup !== false) setQuizMode(false);
+}
+
+function endQuizEarly() {
+  if (!state.session) return;
+  stopTimer();
+  stopListening();
+  stopSpeak();
+  const total = state.session.questions.length;
+  saveSessionSummary(total);
+  renderHistory();
+  elements.questionText.textContent = "Quiz ended.";
+  elements.shapeHint.innerHTML = "";
+  state.session = null;
+  state.paused = false;
   setQuizMode(false);
+}
+
+function saveSessionSummary(totalQuestions) {
+  const user = getCurrentUser();
+  if (!user || !state.session) return;
+  const total = totalQuestions || state.session.total;
+  const sessionSummary = {
+    date: new Date().toLocaleString(),
+    mode: state.session.settings.mode,
+    score: state.session.correct,
+    total,
+    difficulty: state.session.settings.difficulty,
+  };
+  user.history.unshift(sessionSummary);
+  saveData();
 }
 
 function renderHistory() {
@@ -690,12 +719,8 @@ function startListening() {
 
 function setKeyboardMode(isVisible) {
   if (isVisible) {
-    elements.keyboardRow.classList.remove("hidden");
-    elements.skipAnswerBtn.classList.remove("hidden");
     elements.keypad.classList.remove("hidden");
   } else {
-    elements.keyboardRow.classList.add("hidden");
-    elements.skipAnswerBtn.classList.add("hidden");
     elements.keypad.classList.add("hidden");
   }
 }
@@ -712,6 +737,24 @@ function stopListening() {
 function setQuizMode(active) {
   elements.setupScreen.classList.toggle("hidden", active);
   elements.quizScreen.classList.toggle("hidden", !active);
+}
+
+function togglePause() {
+  if (!state.session) return;
+  state.paused = !state.paused;
+  if (state.paused) {
+    stopTimer();
+    stopListening();
+    stopSpeak();
+    elements.pauseQuizBtn.textContent = "Resume";
+    elements.feedback.textContent = "Paused";
+  } else {
+    elements.pauseQuizBtn.textContent = "Pause";
+    elements.feedback.textContent = "";
+    startTimer(state.timeLeft || getTimeLimit(state.session.settings.difficulty));
+    startListening();
+    speakQuestion(state.session.currentQuestion.text);
+  }
 }
 
 function primeAudio() {
@@ -870,6 +913,7 @@ function clamp(value, min, max) {
 }
 
 function handleKeypadClick(event) {
+  if (state.paused) return;
   const button = event.target.closest("button");
   if (!button) return;
   const value = button.dataset.value;

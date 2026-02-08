@@ -7,21 +7,19 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header class="app-header">
-      <div>
-        <h1>Math Buddy</h1>
-        <p class="subtitle">Mental math practice for ages 5–12</p>
-      </div>
-      <div class="profile-bar">
-        <span id="currentUserLabel">No profile</span>
-        <button id="openProfileBtn" class="secondary">Profiles</button>
-      </div>
-    </header>
-
     <main>
       <section class="screen screen-setup" id="setupScreen">
         <div class="panel">
-          <h2>Quiz Setup</h2>
+          <div class="setup-header">
+            <div>
+              <h2>Quiz Setup</h2>
+              <p class="subtitle">Mental math practice for ages 5–12</p>
+            </div>
+            <div class="profile-bar">
+              <span id="currentUserLabel">No profile</span>
+              <button id="openProfileBtn" class="secondary">Profiles</button>
+            </div>
+          </div>
 
           <div class="field">
             <label for="gradeSelect">Grade or age group</label>
@@ -147,6 +145,11 @@
           </div>
 
           <button id="startQuizBtn" class="primary">Start Quiz</button>
+
+          <div class="panel-sub">
+            <h3>History</h3>
+            <div id="historyList" class="history-list">No scores yet.</div>
+          </div>
         </div>
       </section>
 
@@ -171,12 +174,7 @@
           <button id="listenBtn" class="secondary">Restart Listening</button>
         </div>
 
-        <div class="answer-row hidden" id="keyboardRow">
-          <input id="answerInput" type="number" placeholder="Type answer" />
-          <button id="submitAnswerBtn" class="primary">Submit</button>
-        </div>
-
-        <button id="skipAnswerBtn" class="secondary hidden">Skip</button>
+        <input id="answerInput" type="number" class="hidden-input" />
 
         <div id="keypad" class="keypad hidden" aria-label="Answer keypad">
           <button class="keypad-btn" data-value="1">1</button>
@@ -193,7 +191,12 @@
           <button class="keypad-btn ok" data-action="ok">OK</button>
         </div>
 
-          <button id="quitQuizBtn" class="secondary">Quit Quiz</button>
+        <div class="quiz-actions">
+          <button id="pauseQuizBtn" class="secondary">Pause</button>
+          <button id="backToSettingsBtn" class="secondary">Settings</button>
+          <button id="endQuizBtn" class="secondary">End Quiz</button>
+          <button id="editProfileBtn" class="secondary">Edit Profile</button>
+        </div>
 
           <div id="feedback" class="feedback"></div>
 
@@ -202,10 +205,6 @@
             <div id="scoreSummary">No active session.</div>
           </div>
 
-          <div class="panel-sub">
-            <h3>History</h3>
-            <div id="historyList" class="history-list">No scores yet.</div>
-          </div>
         </div>
       </section>
     </main>
