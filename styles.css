@@ -260,13 +260,55 @@ button.secondary {
 }
 
 .listen-status {
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  font-weight: 700;
   color: #1d4ed8;
 }
 
 .hidden-input {
   display: none;
+}
+
+.listen-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+
+.mic-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #94a3b8;
+  border: 2px solid #cbd5f5;
+}
+
+.mic-dot.active {
+  background: #22c55e;
+  border-color: #86efac;
+}
+
+.mic-dot.off {
+  background: #ef4444;
+  border-color: #fecaca;
+}
+
+.type-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.type-row input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #cbd2d9;
+  font-size: 1rem;
+}
+
+.type-row button {
+  padding: 10px 14px;
 }
 
 .hidden {

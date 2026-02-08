@@ -60,14 +60,15 @@ const elements = {
   shapeHint: $("shapeHint"),
   answerDisplay: $("answerDisplay"),
   answerInput: $("answerInput"),
-  listenBtn: $("listenBtn"),
   speechStatus: $("speechStatus"),
+  micDot: $("micDot"),
+  typeAnswerInput: $("typeAnswerInput"),
+  typeAnswerBtn: $("typeAnswerBtn"),
   feedback: $("feedback"),
   scoreSummary: $("scoreSummary"),
   historyList: $("historyList"),
   keypad: $("keypad"),
   celebration: $("celebration"),
-  listenCard: $("listenCard"),
   pauseQuizBtn: $("pauseQuizBtn"),
   endQuizBtn: $("endQuizBtn"),
   editProfileBtn: $("editProfileBtn"),
@@ -84,7 +85,8 @@ function init() {
   renderProfileBar();
   renderHistory();
   state.isIOS = isIOSDevice();
-  disableSpeech();
+  setupSpeech();
+  setKeyboardMode(true);
 
   elements.modeSelect.addEventListener("change", updateModeOptions);
   elements.gradeSelect.addEventListener("change", () =>
@@ -98,8 +100,11 @@ function init() {
   );
   elements.saveProfileBtn.addEventListener("click", saveProfile);
   elements.startQuizBtn.addEventListener("click", startSession);
-  elements.listenBtn.addEventListener("click", () => startListening());
   elements.keypad.addEventListener("click", handleKeypadClick);
+  elements.typeAnswerBtn.addEventListener("click", submitTypedAnswer);
+  elements.typeAnswerInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") submitTypedAnswer();
+  });
   elements.pauseQuizBtn.addEventListener("click", togglePause);
   elements.endQuizBtn.addEventListener("click", endQuizEarly);
   elements.editProfileBtn.addEventListener("click", () => {
@@ -347,6 +352,7 @@ function nextQuestion() {
   state.currentAnswer = "";
   updateAnswerDisplay();
   elements.answerInput.value = "";
+  elements.typeAnswerInput.value = "";
   elements.feedback.textContent = "";
   elements.feedback.className = "feedback";
   renderShapes(question);
@@ -627,22 +633,17 @@ function generateAddSubtractQuestion(settings) {
 
 function setupSpeech() {
   if (state.isIOS) {
-    elements.speechStatus.textContent =
-      "Voice not supported on iPhone. Use tap keypad.";
-    elements.listenBtn.disabled = true;
-    setKeyboardMode(true);
+    setSpeechIndicator(false, "Voice not available");
     return;
   }
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    elements.speechStatus.textContent = "Speech not supported. Use keyboard.";
-    elements.listenBtn.disabled = true;
-    setKeyboardMode(true);
+    setSpeechIndicator(false, "Voice not available");
     return;
   }
   state.speechSupported = true;
-  setKeyboardMode(false);
+  setSpeechIndicator(true, "Listening ready");
   state.recognition = new SpeechRecognition();
   state.recognition.lang = "en-US";
   state.recognition.interimResults = true;
@@ -663,29 +664,19 @@ function setupSpeech() {
         return;
       }
     }
-    elements.speechStatus.textContent = "Listening... try again";
+    setSpeechIndicator(true, "Listening... try again");
   };
 
   state.recognition.onerror = () => {
-    elements.speechStatus.textContent = "Speech error";
+    setSpeechIndicator(false, "Voice error");
   };
 
   state.recognition.onend = () => {
-    elements.speechStatus.textContent = "Speech ready";
+    setSpeechIndicator(true, "Listening ready");
     if (state.session) {
       startListening();
     }
   };
-}
-
-function disableSpeech() {
-  state.speechSupported = false;
-  state.recognition = null;
-  elements.speechStatus.textContent =
-    "Voice off. Use the keypad to answer.";
-  elements.listenBtn.disabled = true;
-  elements.listenCard.classList.add("hidden");
-  setKeyboardMode(true);
 }
 
 function speakQuestion(text) {
@@ -707,10 +698,10 @@ function stopSpeak() {
 function startListening() {
   if (!state.speechSupported || !state.recognition) return;
   try {
-    elements.speechStatus.textContent = "Listening...";
+    setSpeechIndicator(true, "Listening...");
     state.recognition.start();
   } catch (error) {
-    elements.speechStatus.textContent = "Speech busy";
+    setSpeechIndicator(false, "Voice busy");
   }
 }
 
@@ -933,6 +924,14 @@ function handleKeypadClick(event) {
   }
 }
 
+function submitTypedAnswer() {
+  if (!state.session || state.paused) return;
+  const typed = elements.typeAnswerInput.value.trim();
+  if (!typed) return;
+  setAnswerValue(typed);
+  submitAnswer(false);
+}
+
 function setAnswerValue(value) {
   elements.answerInput.value = value;
   state.currentAnswer = value;
@@ -943,6 +942,16 @@ function updateAnswerDisplay() {
   elements.answerDisplay.textContent = state.currentAnswer
     ? `Your answer: ${state.currentAnswer}`
     : "Your answer: —";
+}
+
+function setSpeechIndicator(active, text) {
+  elements.speechStatus.textContent = text;
+  elements.micDot.classList.remove("active", "off");
+  if (active === true) {
+    elements.micDot.classList.add("active");
+  } else if (active === false) {
+    elements.micDot.classList.add("off");
+  }
 }
 
 function isIOSDevice() {

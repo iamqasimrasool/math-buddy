@@ -170,13 +170,17 @@
 
         <div id="answerDisplay" class="answer-display">Your answer: —</div>
 
-        <div class="listen-card hidden" id="listenCard">
-          <div class="listen-title">Answer by speaking</div>
-          <div id="speechStatus" class="listen-status">Speech ready</div>
-          <button id="listenBtn" class="secondary">Restart Listening</button>
+        <div class="listen-indicator" aria-live="polite">
+          <span id="micDot" class="mic-dot" aria-hidden="true"></span>
+          <span id="speechStatus" class="listen-status">Listening ready</span>
         </div>
 
         <input id="answerInput" type="number" class="hidden-input" />
+
+        <div class="type-row">
+          <input id="typeAnswerInput" type="number" placeholder="Type answer" />
+          <button id="typeAnswerBtn" class="primary">OK</button>
+        </div>
 
         <div id="keypad" class="keypad hidden" aria-label="Answer keypad">
           <button class="keypad-btn" data-value="1">1</button>
