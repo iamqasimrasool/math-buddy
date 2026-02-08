@@ -233,10 +233,13 @@ button.secondary {
   color: #b91c1c;
 }
 
-.session-summary {
-  background: #f1f5f9;
-  padding: 12px;
+.score-line {
+  background: #eef2ff;
+  padding: 8px 12px;
   border-radius: 12px;
+  font-weight: 700;
+  text-align: center;
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
 }
 
 .listen-card {

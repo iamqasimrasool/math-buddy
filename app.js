@@ -102,7 +102,7 @@ function init() {
   elements.listenBtn.addEventListener("click", () => startListening());
   elements.keypad.addEventListener("click", handleKeypadClick);
   elements.pauseQuizBtn.addEventListener("click", togglePause);
-  elements.backToSettingsBtn.addEventListener("click", () => quitQuiz(false));
+  elements.backToSettingsBtn.addEventListener("click", () => quitQuiz(true));
   elements.endQuizBtn.addEventListener("click", endQuizEarly);
   elements.editProfileBtn.addEventListener("click", () => {
     if (state.session && !state.paused) togglePause();
