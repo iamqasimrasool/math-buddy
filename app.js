@@ -105,6 +105,16 @@ function init() {
   elements.typeAnswerInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") submitTypedAnswer();
   });
+  elements.answerInput.addEventListener("keydown", (event) => {
+    if (event.key >= "0" && event.key <= "9") {
+      handleNumberKey(event.key);
+    } else if (event.key === "Enter") {
+      submitAnswer(false);
+    } else if (event.key === "Backspace") {
+      state.currentAnswer = state.currentAnswer.slice(0, -1);
+      setAnswerValue(state.currentAnswer);
+    }
+  });
   elements.pauseQuizBtn.addEventListener("click", togglePause);
   elements.endQuizBtn.addEventListener("click", endQuizEarly);
   elements.editProfileBtn.addEventListener("click", () => {
@@ -358,7 +368,7 @@ function nextQuestion() {
   renderShapes(question);
   startTimer(getTimeLimit(state.session.settings.difficulty));
   startListening();
-  speakQuestion(question.text);
+  speakQuestion(question.spokenText || question.text);
 }
 
 function submitAnswer(skip) {
@@ -533,6 +543,7 @@ function generateTableQuestion(settings) {
   const multiplier = randInt(min, max);
   return {
     text: `${table} × ${multiplier}`,
+    spokenText: `${table} times ${multiplier}`,
     answer: table * multiplier,
   };
 }
@@ -741,7 +752,7 @@ function togglePause() {
     elements.feedback.textContent = "";
     startTimer(state.timeLeft || getTimeLimit(state.session.settings.difficulty));
     startListening();
-    speakQuestion(state.session.currentQuestion.text);
+    speakQuestion(state.session.currentQuestion.spokenText || state.session.currentQuestion.text);
   }
 }
 
@@ -756,25 +767,30 @@ function primeAudio() {
 }
 
 function playSound(type) {
+  primeAudio();
   if (!state.audioCtx) return;
-  const ctx = state.audioCtx;
-  const now = ctx.currentTime;
-  const gain = ctx.createGain();
-  gain.gain.setValueAtTime(0.0001, now);
-  gain.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
-  gain.connect(ctx.destination);
+  try {
+    const ctx = state.audioCtx;
+    const now = ctx.currentTime;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+    gain.connect(ctx.destination);
 
-  const osc = ctx.createOscillator();
-  osc.type = type === "correct" ? "triangle" : "sawtooth";
-  osc.frequency.setValueAtTime(type === "correct" ? 700 : 220, now);
-  osc.frequency.exponentialRampToValueAtTime(
-    type === "correct" ? 900 : 180,
-    now + 0.18
-  );
-  osc.connect(gain);
-  osc.start(now);
-  osc.stop(now + 0.4);
+    const osc = ctx.createOscillator();
+    osc.type = type === "correct" ? "triangle" : "sawtooth";
+    osc.frequency.setValueAtTime(type === "correct" ? 700 : 220, now);
+    osc.frequency.exponentialRampToValueAtTime(
+      type === "correct" ? 900 : 180,
+      now + 0.18
+    );
+    osc.connect(gain);
+    osc.start(now);
+    osc.stop(now + 0.4);
+  } catch (error) {
+    console.error("Sound playback error:", error);
+  }
 }
 
 function showCelebration(type) {
@@ -898,6 +914,13 @@ function sample(list) {
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
+}
+
+function handleNumberKey(key) {
+  if (state.paused || !state.session) return;
+  if (state.currentAnswer.length >= 4) return;
+  state.currentAnswer += key;
+  setAnswerValue(state.currentAnswer);
 }
 
 function handleKeypadClick(event) {
